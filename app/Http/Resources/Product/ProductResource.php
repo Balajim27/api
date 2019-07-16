@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Resources\Product;
+use App\Http\Resources\Product\ProductCollection;
 
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,8 +20,14 @@ class ProductResource extends JsonResource
             'name'=>$this->name,
             'details'=>$this->detail,
             'price'=>$this->price,
-            'stock'=>$this->stock,
+            'stock'=>$this->stock==0 ? 'out of stock' : $this->stock,
             'discount'=>$this->discount,
+            'totalPrice'=>round((1-($this->discount/100))* $this->price),
+            'rating'=>$this->reviews->count()>0 ? round($this->reviews->sum('star')/$this->reviews->count()) : 'No rating yet',
+            'href'=>[
+
+                'reviews'=>route('reviews.index',$this->id)  
+            ]
 
         ];
     }
